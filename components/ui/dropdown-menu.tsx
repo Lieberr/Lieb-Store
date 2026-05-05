@@ -17,16 +17,12 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
 
 /* ===================== TRIGGER COM asChild ===================== */
 function DropdownMenuTrigger({
-  asChild,
   children,
   ...props
-}: MenuPrimitive.Trigger.Props & {
-  asChild?: boolean
-}) {
+}: MenuPrimitive.Trigger.Props) {
   return (
     <MenuPrimitive.Trigger
       data-slot="dropdown-menu-trigger"
-      as={asChild ? Slot : "div"}
       {...props}
     >
       {children}
@@ -98,20 +94,17 @@ function DropdownMenuItem({
   className,
   inset,
   variant = "default",
-  asChild,
   children,
   ...props
 }: MenuPrimitive.Item.Props & {
   inset?: boolean
   variant?: "default" | "destructive"
-  asChild?: boolean
 }) {
   return (
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
       data-inset={inset}
       data-variant={variant}
-      as={asChild ? Slot : "div"}
       className={cn(
         "group/dropdown-menu-item relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:pl-8 data-disabled:pointer-events-none data-disabled:opacity-50",
         className
@@ -132,17 +125,14 @@ function DropdownMenuSubTrigger({
   className,
   inset,
   children,
-  asChild,
   ...props
 }: MenuPrimitive.SubmenuTrigger.Props & {
   inset?: boolean
-  asChild?: boolean
 }) {
   return (
     <MenuPrimitive.SubmenuTrigger
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
-      as={asChild ? Slot : "div"}
       className={cn(
         "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-inset:pl-8",
         className
