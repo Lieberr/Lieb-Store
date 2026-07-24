@@ -3,6 +3,8 @@ import '@/assets/styles/globals.css'
 import {Inter} from 'next/font/google';
 import { APP_DESCRIPTION, APP_NAME, SERVER_URL } from "@/lib/constants";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/toast";
+import { Toast } from "@base-ui/react";
 
 
 const inter = Inter({
@@ -36,6 +38,7 @@ export default function RootLayout({
         enableSystem
         disableTransitionOnChange>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
