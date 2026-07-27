@@ -24,12 +24,11 @@ const UserButton = async () => {
         <div className="flex gap-2 items-center">
             <DropdownMenu>
                 <DropdownMenuTrigger>
-                    <button
-                        type="button"
+                    <div
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-medium"
                     >
                         {firstInitial}
-                    </button>
+                    </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='w-56' align="end">
                     <DropdownMenuGroup>

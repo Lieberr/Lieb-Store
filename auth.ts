@@ -59,8 +59,8 @@ export const config = {
         async jwt({token, user, trigger, session}: any) {
             // assign user fields to token
             if (user) {
+                token.id = user.id;
                 token.role = user.role;
-                
 
                 // if user has no nome then use the email
                 if (user.name === 'NO_NAME') {
@@ -72,10 +72,64 @@ export const config = {
                         data: {name: token.name}
                     })
                 }
+                if(trigger === 'signIn' || trigger === 'signUp') {
+                    const cookiesObject = await cookies();
+                    const sessionCartId = cookiesObject.get('sessionCartId')?.value;
+
+                    if(sessionCartId) {
+                        const sessionCart = await prisma.cart.findFirst({
+                            where: {sessionCartId}
+                        });
+
+                        if(sessionCart) {
+                            await prisma.cart.deleteMany({
+                                where: {userId: user.id}
+                            });
+
+                            await prisma.cart.update({
+                                where: {id: sessionCart.id},
+                                data: {userId: user.id}
+                            })
+                        }
+                    }
+                }
+            }
+
+            if(session?.user.name && trigger === 'update') {
+                token.name = session.user.name;
             }
             return token;
         },
+        async session({session, token}: any) {
+            if (session.user && token.id) {
+                session.user.id = token.id;
+            }
+            if (token.role) {
+                session.user = {
+                    ...session.user,
+                    role: token.role,
+                };
+            }
+            return session;
+        },
         authorized({request, auth}: any) {
+            // Rotas protegidas dentro de um array
+            const protectedPaths = [
+                /\/shipping-address/,
+                /\/payment-method/,
+                /\/place-order/,
+                /\/profile/,
+                /\/user\/(.*)/,
+                /\/order\/(.*)/,
+                /\/admin/,
+            ];
+
+            // Pegar o pathname ex; rota1/145/oi
+            const {pathname} = request.nextUrl;
+
+            // verifica se usuario esta logado e se a rota que ele esta tentando acessar é uma das protegidas
+            if(!auth && protectedPaths.some((p) => p.test(pathname))) return false;
+
             // Check for session cart cookie
             if(!request.cookies.get('sessionCartId')) {
                 //generate new session cart id cookie
