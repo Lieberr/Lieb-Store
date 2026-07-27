@@ -10,22 +10,23 @@ Em Desenvolvimento
 
 Atualmente Implementado:
 
-✅ Estrutura inicial da aplicação com Next.js
-✅ Layout responsivo
-✅ Componentização com React
-✅ interface utilizando ShadCN UI
-✅ Estilização com Tailwind CSS
-✅ Banco de dados PostgreSQL configurado
-✅ ORM Prisma para gerenciamento do banco
-✅ Modelagem de produtos, usuarios e carrinho
-✅ Seed inicial de dados
-✅ Listagem de produtos utilizando dados reais do banco
-✅ Sistema de autenticação com Next Auth
-✅ Carrinho de comprar persistido no banco de dados (ADD AND REMOVE)
+- Estrutura inicial da aplicação com Next.js
+- Layout responsivo
+- Componentização com React
+- interface utilizando ShadCN UI
+- Estilização com Tailwind CSS
+- Banco de dados PostgreSQL configurado
+- ORM Prisma para gerenciamento do banco
+- Modelagem de produtos, usuarios e carrinho
+- Seed inicial de dados
+- Listagem de produtos utilizando dados reais do banco
+- Sistema de autenticação com Next Auth
+- Carrinho de comprar persistido no banco de dados (ADD AND REMOVE)
+- Criptografia de senha usando Bcrypt
 
-# Tecnologias Utilizadas
+# 🛠️ Tecnologias Utilizadas
 
-## Front-End
+## 👨‍💻 Front-End
 
 - Next.js 
 - React
@@ -34,25 +35,26 @@ Atualmente Implementado:
 - ShadCN UI
 
 
-## Back-End
+## ⚙️ Back-End
 
 - Next.js Server Actions
 - Prisma ORM
 - PostgreSQL
 
-## Autenticação e Validação
+## 🔐 Autenticação e Validação
 
 - Next Auth
 - Zod
 - React hook form
+- Bcrypt
 
-## Ferramentas
+## 🔨 Ferramentas
 
 - Git
 - GitHub
 - Vercel
 
-# Arquitetura do Projeto
+# 🏗️ Arquitetura do Projeto
 
 O projeto utiliza uma arquitetura baseada no App Router do Next.js, aproveitando:
 
