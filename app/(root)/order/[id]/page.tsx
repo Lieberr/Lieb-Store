@@ -29,6 +29,7 @@ const OrderDetailsPage = async ({
           qty: Number(item.qty),
         })) ?? [],
       }}
+      paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
     />
   );
 };
