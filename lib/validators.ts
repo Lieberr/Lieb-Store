@@ -23,6 +23,11 @@ export const insertProductsSchema = z.object({
     price: currency, 
 });
 
+// Schema for updating products
+export const updateProductsSchema = insertProductsSchema.extend({
+    id: z.string().min(1, 'id is required')
+})
+
 
 //schema for sgning users in
 export const signInFormSchema = z.object({
