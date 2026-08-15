@@ -8,11 +8,12 @@ import { getUserById } from "./user.actions";
 import { redirect } from "next/navigation";
 import { insertOrderSchema, shippingAddressSchema } from "@/lib/validators";
 import { prisma } from "@/db/prisma";
-import { CartItem, PaymentResult } from "@/types";
+import { CartItem, PaymentResult, shippingAddress } from "@/types";
 import { paypal } from "@/lib/paypal";
 import { revalidatePath } from "next/cache";
 import { PAGE_SIZE } from "@/lib/constants";
 import { Prisma } from "@prisma/client";
+import { sendPurchaseReceipt } from "@/email";
 
 
 // Create order and create the order items
@@ -34,7 +35,7 @@ export async function createOrder() {
             return {
                 success: false,
                 message: 'Your cart is empty',
-                redirectTo: '.cart'
+                redirectTo: '/cart'
             }
         }
 
@@ -277,7 +278,23 @@ export async function updateOrderToPaid({
 
         if (!updateOrder) throw new Error('Order not found');
 
-
+        await sendPurchaseReceipt({
+            order: {
+                ...updateOrder,
+                shippingAddress: updateOrder.shippingAddress as shippingAddress,
+                paymentResult: updateOrder.paymentResult as PaymentResult,
+                orderitems: updateOrder.OrderItem.map((item) => ({
+                ...item,
+                price: Number(item.price),
+                qty: Number(item.qty),
+                ProductId: item.productId,
+                })),
+                user: {
+                name: updateOrder.user.name,
+                email: updateOrder.user.email,
+                },
+            }
+            });
 }
 
 // Get users orders
