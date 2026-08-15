@@ -15,19 +15,29 @@ const ProductList = ({
     const limitedData = limit ? data.slice(0, limit) : data;
 
     return ( 
-        <div className="my-10">
-            <h2 className="h2-bold mb-4">
-                {title}
-            </h2>
+        <div className="my-12">
+            {title && (
+                <div className="mb-6 flex items-end justify-between gap-4">
+                    <div>
+                        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                            Featured
+                        </p>
+                        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                            {title}
+                        </h2>
+                    </div>
+                </div>
+            )}
+
             {data.length > 0 ? (
-                <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {limitedData.map((product: Product) => (
                         <ProductCard key={product.slug} product={product} />
                     ) )}
                 </div>
             ) : (
-                <div>
-                    <p>No Products found</p>
+                <div className="rounded-2xl border border-dashed p-10 text-center">
+                    <p className="text-sm text-muted-foreground">No Products found</p>
                 </div>
             )}
         </div>
