@@ -1,4 +1,4 @@
-# ProStore 🛒
+# LiebStore 🛒
 
 E-commerce full stack desenvolvido com Next.js, Typescript e PostgreSQL, com foco em uma experiência de compra moderna, segura e escalável.
 
