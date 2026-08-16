@@ -124,7 +124,7 @@ const ProductDetailsPage = async (props: {
                     </div>
                 </div>
 
-                <div className="lg:col-span-3">
+                <div className="lg:col-span-3 lg:self-start">
                     <Card className="rounded-2xl border shadow-sm lg:sticky lg:top-24">
                         <CardContent className="space-y-5 p-5">
                             <div className="flex items-center justify-between">
