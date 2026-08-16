@@ -8,9 +8,9 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {ControllerRenderProps, useForm, SubmitHandler} from 'react-hook-form';
 import {z} from 'zod';
 import { shippingAddressDefaultValues } from "@/lib/constants";
-import { Form, FormControl, FormField, FormLabel, FormItem } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormLabel, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from "@/components/ui/input";
-import { ArrowRight } from "lucide-react";
+import { AlertCircle, ArrowRight, Loader2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { updateUserAddress } from "@/actions/user.actions";
@@ -42,112 +42,174 @@ const ShippingAddressForm = ({address}: {address: shippingAddress}) => {
         })
     }
 
-    return ( <>
-        <div className="max-w-md mx-auto space-y-4">
-            <h1 className="h2-bold mt-4">Shipping Address</h1>
-            {error && (
-                <div className='mb-4 rounded-md bg-red-100 p-3 text-red-700'>
-                    {error}
+    return (
+        <div className="max-auto w-full max-w-2xl px-4 pb-12">
+            <div className="rounded-2xl border bg-card shadow-sm">
+
+                <div className="border-b px-6 py-5 sm:px-8">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <MapPin className="h-5 w-5" />
+                        </div>
+
+                        <div>
+                            <h1 className="text-xl font-bold tracking-tight sm:text-2xl">Shipping Address</h1>
+                            
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                Enter the address where your order should be delivered.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            )}
-            <p className="text-sm text-muted-foreground">
-                Please enter and address to ship to
-            </p>
-            <Form {...form}>
-                <form method="post" className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="flex flex-col md:flex-row gap-5">
-                        <FormField
-                        control={form.control}
-                        name='fullName'
-                        render={({field}: {field: ControllerRenderProps<z.infer<typeof shippingAddressSchema>, 'fullName'>}) => (
-                            <FormItem className="w-full">
-                                <FormLabel>Full Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter full name" {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                        >
-                           
-                        </FormField>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-5">
-                        <FormField
-                        control={form.control}
-                        name='streetAddress'
-                        render={({field}: {field: ControllerRenderProps<z.infer<typeof shippingAddressSchema>, 'streetAddress'>}) => (
-                            <FormItem className="w-full">
-                                <FormLabel>Address</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter address" {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                        >
-                           
-                        </FormField>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-5">
-                        <FormField
-                        control={form.control}
-                        name='city'
-                        render={({field}: {field: ControllerRenderProps<z.infer<typeof shippingAddressSchema>, 'city'>}) => (
-                            <FormItem className="w-full">
-                                <FormLabel>City</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter city" {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                        >
-                           
-                        </FormField>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-5">
-                        <FormField
-                        control={form.control}
-                        name='postalCode'
-                        render={({field}: {field: ControllerRenderProps<z.infer<typeof shippingAddressSchema>, 'postalCode'>}) => (
-                            <FormItem className="w-full">
-                                <FormLabel>Postal Code</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter postal code" {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                        >
-                           
-                        </FormField>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-5">
-                        <FormField
-                        control={form.control}
-                        name='country'
-                        render={({field}: {field: ControllerRenderProps<z.infer<typeof shippingAddressSchema>, 'country'>}) => (
-                            <FormItem className="w-full">
-                                <FormLabel>Country</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Enter country" {...field} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                        >
-                           
-                        </FormField>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button type='submit' disabled={isPending}>
-                            {isPending ? (
-                                <Loader className='w-4 h-4 animate-spin' />
-                            ) : (
-                                <ArrowRight className="w-4 h-4" />
-                            )} Continue
-                        </Button>
-                    </div>
-                </form>
-            </Form>
+
+                <div className="px-6 py-6 sm:px-8">
+                    {error && (
+                        <div className="mb-6 items-start gap-3 rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
+                            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+
+                            <div>
+                                <p className="font-semibold">
+                                    Something went wrong
+                                </p>
+                                <p className="mt-1 opacity-90">
+                                    {error}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    <Form {...form}>
+                        <form method="POST" className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+                            <FormField
+                                control={form.control}
+                                name="fullName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Full Name</FormLabel>
+
+                                        <FormControl>
+                                            <Input
+                                                placeholder="John Doe"
+                                                className="h-11"
+                                                {...field}
+                                            />
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                             <FormField
+                                control={form.control}
+                                name="streetAddress"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Street Address</FormLabel>
+
+                                        <FormControl>
+                                            <Input
+                                                placeholder="123 Main Street"
+                                                className="h-11"
+                                                {...field}
+                                            />
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+                                <FormField
+                                    control={form.control}
+                                    name="city"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>City</FormLabel>
+
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="New York"
+                                                    className="h-11"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="postalCode"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Postal Code</FormLabel>
+
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="10001"
+                                                    className="h-11"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                            </div>
+
+                             <FormField
+                                control={form.control}
+                                name="country"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Country</FormLabel>
+
+                                        <FormControl>
+                                            <Input
+                                                placeholder="United States"
+                                                className="h-11"
+                                                {...field}
+                                            />
+                                        </FormControl>
+
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            
+
+                            <div className="border-t pt-6">
+                                <Button
+                                    type="submit"
+                                    disabled={isPending}
+                                    className="h-11 w-full rounded-xl font-semibold sm:w-auto sm:min-w-44"
+                                >
+                                    {isPending ? (
+                                        <>
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Continue
+                                            <ArrowRight className="h-4 w-4" />
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
+                </div>
+            </div>
         </div>
-    </> );
+    )
 }
  
 export default ShippingAddressForm;
