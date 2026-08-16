@@ -8,7 +8,7 @@ const Star = ({ fillPercent }: { fillPercent: number }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className="h-5 w-5 shrink-0"
+      className="h-4 w-4 shrink-0"
       aria-hidden="true"
     >
       <path
@@ -41,7 +41,7 @@ const Rating = ({
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex gap-1 text-yellow-500">
+      <div className="flex gap-0.5 text-yellow-500">
         {Array.from({ length: 5 }, (_, index) => {
           const starValue = safeValue - index;
 
