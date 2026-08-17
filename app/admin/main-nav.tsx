@@ -3,44 +3,76 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import {
+    LayoutDashboard,
+    Package,
+    ShoppingCart,
+    Users,
+} from "lucide-react";
 import React from "react";
 
 const links = [
     {
-        title: 'Overview',
-        href: '/admin/overview'
+        title: "Overview",
+        href: "/admin/overview",
+        icon: LayoutDashboard,
     },
     {
-        title: 'Products',
-        href: '/admin/products'
+        title: "Products",
+        href: "/admin/products",
+        icon: Package,
     },
     {
-        title: 'Orders',
-        href: '/admin/orders'
+        title: "Orders",
+        href: "/admin/orders",
+        icon: ShoppingCart,
     },
     {
-        title: 'Users',
-        href: '/admin/users'
-    }
+        title: "Users",
+        href: "/admin/users",
+        icon: Users,
+    },
+];
 
-]
-
-
-const MainNav = ({className, ...props}: React.HTMLAttributes<HTMLElement>) => {
+const MainNav = ({
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLElement>) => {
     const pathname = usePathname();
 
-    return ( 
-    <nav 
-        className={cn('flex items-center space-x-4 lg:space-x-6', className)}
-        {...props}
-    >
-        {links.map((item) => (
-            <Link key={item.href} href={item.href} className={cn('text-sm font-medium transition-colors hover:text-primary', pathname.includes(item.href) ? '' : 'text-muted-foreground')}>
-                {item.title}
-            </Link>
-        ))}
-    </nav> 
-        );
-}
- 
+    return (
+        <nav
+            className={cn(
+                "flex items-center gap-1",
+                className
+            )}
+            {...props}
+        >
+            {links.map((item) => {
+                const Icon = item.icon;
+
+                const isActive =
+                    pathname === item.href ||
+                    pathname.startsWith(`${item.href}/`);
+
+                return (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                            "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                            isActive
+                                ? "bg-primary/10 text-primary"
+                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                    >
+                        <Icon className="h-4 w-4" />
+                        {item.title}
+                    </Link>
+                );
+            })}
+        </nav>
+    );
+};
+
 export default MainNav;
