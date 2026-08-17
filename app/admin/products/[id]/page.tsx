@@ -53,7 +53,7 @@ const AdminProductUpdatePage = async (props: {
                 </div>
 
                 <div className="p-6">
-                    <ProductForm type="Create" />
+                    <ProductForm type="Update" product={product} productId={product.id} />
                 </div>
             </div>
         </div>
