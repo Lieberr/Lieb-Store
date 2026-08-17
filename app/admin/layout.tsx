@@ -4,12 +4,14 @@ import Link from "next/link";
 import Menu from "@/components/ui/shared/header/menu";
 import MainNav from "./main-nav";
 import AdminSearch from "@/components/admin/admin-search";
+import { requireAdmin } from "@/lib/auth-guard";
 
-export default function AdminLayout({
+export default async function AdminLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    await requireAdmin();
     return (
         <div className="min-h-screen bg-background">
 
@@ -17,7 +19,6 @@ export default function AdminLayout({
             <header className="border-b bg-background/95 backdrop-blur">
                 <div className="container mx-auto flex h-16 items-center px-6">
 
-                    {/* Logo */}
                     <Link
                         href="/"
                         className="flex items-center transition-opacity hover:opacity-80"
@@ -31,10 +32,8 @@ export default function AdminLayout({
                         />
                     </Link>
 
-                    {/* Admin navigation */}
                     <MainNav className="ml-8" />
 
-                    {/* Right side */}
                     <div className="ml-auto flex items-center gap-3">
                         <AdminSearch />
                         <Menu />
@@ -42,7 +41,6 @@ export default function AdminLayout({
                 </div>
             </header>
 
-            {/* Content */}
             <main className="container mx-auto px-6 py-8">
                 {children}
             </main>

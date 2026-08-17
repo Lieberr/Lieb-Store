@@ -95,8 +95,20 @@ export const config = {
                 }
             }
 
-            if(session?.user.name && trigger === 'update') {
-                token.name = session.user.name;
+            if(trigger === 'update') {
+                if(session?.user.name) {
+                    token.name = session.user.name;
+                }
+                // Atualizar role do banco de dados quando houver update de sessão
+                if(token.id) {
+                    const updatedUser = await prisma.user.findUnique({
+                        where: {id: token.id},
+                        select: {role: true}
+                    });
+                    if(updatedUser) {
+                        token.role = updatedUser.role;
+                    }
+                }
             }
             return token;
         },
@@ -129,6 +141,11 @@ export const config = {
 
             // verifica se usuario esta logado e se a rota que ele esta tentando acessar é uma das protegidas
             if(!auth && protectedPaths.some((p) => p.test(pathname))) return false;
+
+            // Validação de admin - impedir acesso se role não for admin
+            if(/\/admin/.test(pathname) && auth?.user?.role !== 'admin') {
+                return false;
+            }
 
             // Check for session cart cookie
             if(!request.cookies.get('sessionCartId')) {
