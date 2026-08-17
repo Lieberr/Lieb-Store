@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { USER_ROLES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { updateUser } from "@/actions/user.actions";
+import { Loader2, Save } from "lucide-react";
 
 
 
@@ -56,9 +57,9 @@ const UpdateUserForm = ({user}: {
     }
 
     return <Form {...form}>
-        <form method="POST" onSubmit={form.handleSubmit(onSubmit)}>
+        <form method="POST" className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+
             {/*Email*/}
-            <div>
                 <FormField
                 control={form.control}
                 name="email"
@@ -66,13 +67,17 @@ const UpdateUserForm = ({user}: {
                     <FormItem className="w-full">
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                            <Input disabled={true} placeholder='Enter user email' {...field} />
+                            <Input disabled={true} placeholder='Enter user email' className="h-11 bg-muted/50" {...field} />
                         </FormControl>
+
+                        <p className="text-xs text-muted-foreground">
+                            Email addresses cannot be changed.
+                        </p>
+
                         <FormMessage />
                     </FormItem>
                 )} />
-            </div>
-            <div className="pt-4">
+
                 {/*NAME*/}
                 <FormField
                 control={form.control}
@@ -81,13 +86,12 @@ const UpdateUserForm = ({user}: {
                     <FormItem className="w-full">
                         <FormLabel>Name</FormLabel>
                         <FormControl>
-                            <Input placeholder='Enter user name' {...field} />
+                            <Input className="h-11" placeholder='Enter user name' {...field} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
                 )} />
-            </div>
-            <div className="pt-4">
+
                 <FormField
                 control={form.control}
                 name="role"
@@ -96,7 +100,7 @@ const UpdateUserForm = ({user}: {
                         <FormLabel>Role</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value.toString()}>
                             <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className="h-11">
                                     <SelectValue placeholder="Select a role" />
                                 </SelectTrigger>
                             </FormControl>
@@ -111,10 +115,20 @@ const UpdateUserForm = ({user}: {
                         <FormMessage />
                     </FormItem>
                 )} />
-            </div>
-            <div className="flex-between mt-4">
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? 'Submitting...' : 'Update User'}
+
+            <div className="border-t mt-6">
+                <Button type="submit" className="h-11 w-full rounded-xl font-semibold gap-2 flex items-center justify-center" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? (
+                        <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Saving changes...
+                        </>
+                    ) : (
+                        <>
+                            <Save className="h-4 w-4" />
+                            Update User
+                        </>
+                    )}
                 </Button>
             </div>
         </form>
