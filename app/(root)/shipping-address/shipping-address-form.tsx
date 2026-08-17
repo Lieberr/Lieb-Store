@@ -89,7 +89,7 @@ const ShippingAddressForm = ({address}: {address: shippingAddress}) => {
 
                                         <FormControl>
                                             <Input
-                                                placeholder="John Doe"
+                                                placeholder="Enter your full name"
                                                 className="h-11"
                                                 {...field}
                                             />

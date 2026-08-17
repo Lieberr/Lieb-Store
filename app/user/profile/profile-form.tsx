@@ -1,87 +1,146 @@
 'use client';
+
 import { updateProfile } from "@/actions/user.actions";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { updateProfileSchema } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Mail, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import {z} from 'zod';
+import { z } from "zod";
 
 const ProfileForm = () => {
-    const {data: session, update} = useSession();
+    const { data: session, update } = useSession();
+    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof updateProfileSchema>>({
         resolver: zodResolver(updateProfileSchema),
         defaultValues: {
-            name: session?.user?.name ?? '',
-            email: session?.user?.email ?? '',
-        }
+            name: session?.user?.name ?? "",
+            email: session?.user?.email ?? "",
+        },
     });
 
-    const {toast} = useToast();
-
-    const onSubmit = async (values: z.infer<typeof updateProfileSchema>) => {
+    const onSubmit = async (
+        values: z.infer<typeof updateProfileSchema>
+    ) => {
         const res = await updateProfile(values);
 
-        if(!res.success) {
+        if (!res.success) {
             return toast({
-                variant: 'destructive',
-                description: res.message
-            })
+                variant: "destructive",
+                description: res.message,
+            });
         }
 
         const newSession = {
             ...session,
             user: {
                 ...session?.user,
-                name: values.name
-            }
-        }
+                name: values.name,
+            },
+        };
 
         await update(newSession);
 
         toast({
-            description: res.message
-        })
-    }
+            description: res.message,
+        });
+    };
 
-    return ( <Form {...form}>
-        <form className="flex flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-5">
+    return (
+        <Form {...form}>
+            <form
+                className="space-y-6"
+                onSubmit={form.handleSubmit(onSubmit)}
+            >
+
+                {/* Email */}
                 <FormField
-                control={form.control}
-                name="email"
-                render={({field}) => (
-                    <FormItem className="w-full">
-                        <FormControl>
-                            <Input disabled placeholder="Email" className="input-field" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Email Address</FormLabel>
+
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+                                <FormControl>
+                                    <Input
+                                        disabled
+                                        className="h-11 pl-10 bg-muted/50"
+                                        placeholder="Email"
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </div>
+
+                            <p className="text-xs text-muted-foreground">
+                                Your email address cannot be changed here.
+                            </p>
+
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
 
+                {/* Name */}
                 <FormField
-                control={form.control}
-                name="name"
-                render={({field}) => (
-                    <FormItem className="w-full">
-                        <FormControl>
-                            <Input placeholder="Name" className="input-field" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+
+                            <div className="relative">
+                                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
+                                <FormControl>
+                                    <Input
+                                        className="h-11 pl-10"
+                                        placeholder="Enter your name"
+                                        {...field}
+                                    />
+                                </FormControl>
+                            </div>
+
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <Button type="submit" size='lg' className="button col-span-2 w-full" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Submitting...' : 'Update Profile'}
-            </Button>
-        </form>
-    </Form> );
-}
- 
+
+                {/* Button */}
+                <div className="border-t pt-6">
+                    <Button
+                        type="submit"
+                        disabled={form.formState.isSubmitting}
+                        className="h-11 w-full rounded-xl font-semibold sm:w-auto sm:min-w-44"
+                    >
+                        {form.formState.isSubmitting ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Saving...
+                            </>
+                        ) : (
+                            "Save Changes"
+                        )}
+                    </Button>
+                </div>
+
+            </form>
+        </Form>
+    );
+};
+
 export default ProfileForm;
