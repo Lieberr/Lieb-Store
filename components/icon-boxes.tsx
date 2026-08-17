@@ -37,14 +37,12 @@ const IconBoxes = () => {
               lg:flex-col lg:items-start lg:gap-4 ${index < features.length - 1  ? 'border-b sm:border-b-0 lg:border-r' : ''} 
               ${index === 1 ? 'sm:border-r0 lg:border-r': ''}`}>
 
-                {/*ICON*/}
                 <div className='flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-all
                 duration-300 group-hover:scale-105 group-hover:bg-primary group-hover:text-primary-foreground'>
                   <Icon className='h-5 w-5'
                   strokeWidth={1.8} />
                 </div>
 
-                {/*CONTENT*/}
                 <div className='space-y-1.5'>
                   <h3 className='text-sm font-semibold tracking-tight text-foreground sm:text-base'>
                     {feature.title}
