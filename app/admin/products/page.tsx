@@ -177,7 +177,7 @@ const AdminProductsPage = async (props: {
 
                                         <TableCell className="text-right">
                                             <span className="font-semibold">
-                                                {formatCurrency(product.price)}
+                                                {formatCurrency(Number(product.price))}
                                             </span>
                                         </TableCell>
 
@@ -213,7 +213,7 @@ const AdminProductsPage = async (props: {
                                                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
 
                                                 <span className="font-medium">
-                                                    {product.rating}
+                                                    {Number(product.rating)}
                                                 </span>
 
                                             </div>
