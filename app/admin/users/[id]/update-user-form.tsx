@@ -13,6 +13,7 @@ import { USER_ROLES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { updateUser } from "@/actions/user.actions";
 import { Loader2, Save } from "lucide-react";
+import { useState } from "react";
 
 
 
@@ -21,6 +22,7 @@ const UpdateUserForm = ({user}: {
 }) => {
     const router = useRouter();
     const {toast} = useToast();
+    const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<z.infer<typeof updateUserSchema>>({
         resolver: zodResolver(updateUserSchema),
@@ -28,22 +30,22 @@ const UpdateUserForm = ({user}: {
     });
 
     const onSubmit = async (values: z.infer<typeof updateUserSchema>) => {
+        setIsLoading(true);
+
         try {
             const res = await updateUser({
                 ...values,
                 id: user.id
             });
 
-            if(!res.success) {
+           if (!res.success) {
                 toast({
                     variant: 'destructive',
                     description: res.message
-                })
-            }
+                });
 
-            toast({
-                description: res.message
-            })
+                return;
+                }
 
             form.reset();
             router.push('/admin/users');
@@ -53,6 +55,8 @@ const UpdateUserForm = ({user}: {
                 variant: 'destructive',
                 description: (error as Error).message
             })
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -117,8 +121,8 @@ const UpdateUserForm = ({user}: {
                 )} />
 
             <div className="border-t mt-6">
-                <Button type="submit" className="h-11 w-full rounded-xl font-semibold gap-2 flex items-center justify-center" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? (
+                <Button type="submit" className="h-11 w-full rounded-xl font-semibold gap-2 flex items-center justify-center" disabled={isLoading}>
+                    {isLoading ? (
                         <>
                             <Loader2 className="h-4 w-4 animate-spin" />
                             Saving changes...
