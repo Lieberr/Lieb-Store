@@ -141,4 +141,29 @@ export const insertReviewsShcema = z.object({
         .max(5, 'Rating must be at most 5')
 })
 
+export const forgotPasswordSchema = z.object({
+    email: z.string().min(1, {message: 'Email is required'}).email({message: 'Invalid email address'})
+})
+
+export const verifyCodeSchema = z.object({
+    email: z.string().email(),
+    code: z
+    .string()
+    .length(6, { message: "The code must be exactly 6 digits" })
+    .regex(/^\d+$/, { message: "The code must contain only numbers" }),
+})
+
+export const resetPasswordSchema = z.object({
+    email: z.string().email(),
+    code: z.string().length(6),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters long" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+})
+
 

@@ -146,5 +146,15 @@ model Review {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model PasswordResetTokenUser {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
 
+  @@index([email])
+  @@index([tokenHash])
+}
 
