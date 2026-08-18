@@ -6,6 +6,7 @@ import { compareSync } from 'bcrypt-ts-edge';
 import type { NextAuthConfig } from 'next-auth';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import GoogleProvider from 'next-auth/providers/google';
 
 
 export const config = {
@@ -19,6 +20,11 @@ export const config = {
     },
     adapter: PrismaAdapter(prisma),
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true,
+        }),
         CredentialsProvider({
            credentials: {
             email: {type: 'email'},
@@ -63,7 +69,7 @@ export const config = {
                 token.role = user.role;
 
                 // if user has no nome then use the email
-                if (user.name === 'NO_NAME') {
+                if (!user.name || user.name === "NO_NAME") {
                     token.name = user.email!.split('@')[0];
 
                     // Update database to reflect the token name

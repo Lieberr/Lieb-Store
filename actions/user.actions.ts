@@ -266,3 +266,8 @@ export async function updateUser(user: z.infer<typeof updateUserSchema>) {
         }
     }
 }
+
+// Sign in with google
+export async function signInWithGoogle() {
+    await signIn('google', {redirectTo: '/'});
+}
