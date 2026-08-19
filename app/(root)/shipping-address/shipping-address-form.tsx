@@ -5,18 +5,17 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { shippingAddressSchema } from "@/lib/validators";
 import {zodResolver} from '@hookform/resolvers/zod';
-import {ControllerRenderProps, useForm, SubmitHandler} from 'react-hook-form';
+import {useForm, SubmitHandler} from 'react-hook-form';
 import {z} from 'zod';
 import { shippingAddressDefaultValues } from "@/lib/constants";
 import { Form, FormControl, FormField, FormLabel, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from "@/components/ui/input";
 import { AlertCircle, ArrowRight, Loader2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Loader } from "lucide-react";
 import { updateUserAddress } from "@/actions/user.actions";
 import { useState } from "react";
 
-const ShippingAddressForm = ({address}: {address: shippingAddress}) => {
+const ShippingAddressForm = ({address}: {address: shippingAddress | null}) => {
     const router = useRouter();
     const [error, setError] = useState<string | null>(null);
 

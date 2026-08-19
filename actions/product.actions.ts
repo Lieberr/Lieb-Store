@@ -6,7 +6,6 @@ import { insertProductsSchema, updateProductsSchema } from "@/lib/validators";
 import { Product } from '@/types'
 import { revalidatePath } from "next/cache";
 import z from "zod";
-import { convertToPlainObject } from "../lib/utils";
 import { Prisma } from '@prisma/client';
 
 
@@ -231,5 +230,9 @@ export async function getFeaturedProducts() {
         take: 4
     })
 
-    return convertToPlainObject(data)
+    return data.map((product) => ({
+        ...product,
+        price: product.price.toString(),
+        rating: Number(product.rating),
+    })) as Product[];
 }
