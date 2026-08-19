@@ -4,8 +4,7 @@ import { NextResponse } from 'next/server';
 export const authConfig = {
     providers: [],
     callbacks: {
-        authorized({request, auth}: any) {
-            // Rotas protegidas dentro de um array
+        authorized({ request, auth }: any) {
             const protectedPaths = [
                 /\/shipping-address/,
                 /\/payment-method/,
@@ -16,40 +15,33 @@ export const authConfig = {
                 /\/admin/,
             ];
 
-            // Pegar o pathname ex; rota1/145/oi
-            const {pathname} = request.nextUrl;
+            const { pathname } = request.nextUrl;
+            const isProtected = protectedPaths.some((p) => p.test(pathname));
 
-            // verifica se usuario esta logado e se a rota que ele esta tentando acessar é uma das protegidas
-            if(!auth && protectedPaths.some((p) => p.test(pathname))) return false;
+            // 1. Não logado tentando acessar rota protegida -> manda para login (return false)
+            if (!auth && isProtected) return false;
 
-            // Validação de admin - impedir acesso se role não for admin
-            if(/\/admin/.test(pathname) && auth?.user?.role !== 'admin') {
-                return false;
+            // 2. Logado tentando acessar /admin sem ser admin -> redireciona para a home (evita o loop com /sign-in)
+            if (/\/admin/.test(pathname) && auth?.user?.role !== 'admin') {
+                return NextResponse.redirect(new URL('/', request.url));
             }
 
-            // Check for session cart cookie
-            if(!request.cookies.get('sessionCartId')) {
-                //generate new session cart id cookie
+            // 3. Cookie de carrinho
+            if (!request.cookies.get('sessionCartId')) {
                 const sessionCartId = crypto.randomUUID();
+                const newRequestheaders = new Headers(request.headers);
 
-                //Clone the request headers
-                const newRequestheaders = new Headers(request.headers)
-
-                // Create new responde and add the new header
                 const response = NextResponse.next({
                     request: {
-                        headers: newRequestheaders
-                    }
+                        headers: newRequestheaders,
+                    },
                 });
 
-                //Set newly generated sessionCartId in the responde cookies
                 response.cookies.set('sessionCartId', sessionCartId);
-
                 return response;
-            } else {
-                return true;
             }
-        }
-    },
 
+            return true;
+        },
+    },
 } satisfies NextAuthConfig;
