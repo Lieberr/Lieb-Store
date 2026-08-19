@@ -5,8 +5,7 @@ import { convertToPlainObject, formatError } from "@/lib/utils";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { getMyCart } from "./cart.actions";
 import { getUserById } from "./user.actions";
-import { redirect } from "next/navigation";
-import { insertOrderSchema, shippingAddressSchema } from "@/lib/validators";
+import { insertOrderSchema } from "@/lib/validators";
 import { prisma } from "@/db/prisma";
 import { CartItem, PaymentResult, shippingAddress } from "@/types";
 import { paypal } from "@/lib/paypal";
@@ -285,9 +284,8 @@ export async function updateOrderToPaid({
                 paymentResult: updateOrder.paymentResult as PaymentResult,
                 orderitems: updateOrder.OrderItem.map((item) => ({
                 ...item,
-                price: Number(item.price),
+                price: item.price.toString(),
                 qty: Number(item.qty),
-                ProductId: item.productId,
                 })),
                 user: {
                 name: updateOrder.user.name,

@@ -4,13 +4,11 @@ import { useToast } from "@/hooks/use-toast";
 import { productDefaultValues } from "@/lib/constants";
 import {
     insertProductsSchema,
-    updateProductsSchema,
 } from "@/lib/validators";
 import { Product } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import {
-    ControllerRenderProps,
     SubmitHandler,
     useForm,
 } from "react-hook-form";
@@ -38,7 +36,6 @@ import { Checkbox } from "../ui/checkbox";
 import {
     ImageIcon,
     Package,
-    Tag,
     DollarSign,
     FileText,
     Star,
@@ -57,21 +54,19 @@ const ProductForm = ({
     const router = useRouter();
     const { toast } = useToast();
 
-    const form = useForm<z.infer<typeof insertProductsSchema>>({
-        resolver:
-            type === "Update"
-                ? zodResolver(updateProductsSchema)
-                : zodResolver(insertProductsSchema),
-
+    const form = useForm<
+        z.input<typeof insertProductsSchema>,
+        unknown,
+        z.output<typeof insertProductsSchema>
+    >({
+        resolver: zodResolver(insertProductsSchema),
         defaultValues:
             product && type === "Update"
                 ? product
                 : productDefaultValues,
     });
 
-    const onSubmit: SubmitHandler<
-        z.infer<typeof insertProductsSchema>
-    > = async (values) => {
+    const onSubmit: SubmitHandler<z.output<typeof insertProductsSchema>> = async (values) => {
         if (type === "Create") {
             const res = await createProduct(values);
 
@@ -312,6 +307,7 @@ const ProductForm = ({
                                             placeholder="0"
                                             className="h-11"
                                             {...field}
+                                            value={field.value as number}
                                         />
                                     </FormControl>
 

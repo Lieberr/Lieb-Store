@@ -27,7 +27,11 @@ const ReviewForm = ({userId, productId, onReviewSubmitted}: {
     const {toast} = useToast();
 
     //Form
-    const form = useForm<z.infer<typeof insertReviewsShcema>>({
+    const form = useForm<
+        z.input<typeof insertReviewsShcema>,
+        unknown,
+        z.output<typeof insertReviewsShcema>
+    >({
         resolver: zodResolver(insertReviewsShcema),
         defaultValues: reviewFormDefaultValues
     });
@@ -35,7 +39,7 @@ const ReviewForm = ({userId, productId, onReviewSubmitted}: {
     
 
     // Submit form handler
-    const onSubmit:SubmitHandler<z.infer<typeof insertReviewsShcema>> = async (values) => {
+    const onSubmit:SubmitHandler<z.output<typeof insertReviewsShcema>> = async (values) => {
         const res = await createUpdateReview({
             ...values,
             productId
@@ -121,7 +125,7 @@ const ReviewForm = ({userId, productId, onReviewSubmitted}: {
                         render={({field}) => (
                             <FormItem>
                                 <FormLabel>Rating</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value.toString()}>
+                                <Select onValueChange={field.onChange} value={String(field.value ?? '')}>
                                     <FormControl>
                                         <SelectTrigger className="h1-11 rounded-xl">
                                             <SelectValue placeholder='Select a rating' />

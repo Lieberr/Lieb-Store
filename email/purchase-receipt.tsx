@@ -1,6 +1,5 @@
 import { formatCurrency } from "@/lib/utils";
 import { Order } from "@/types";
-require('dotenv').config();
 import sampleData from "@/db/sample-data";
 import {
     Body,
@@ -45,7 +44,7 @@ PurchaseReceiptEmail.PreviewProps = {
     orderitems: sampleData.products.map((x) => ({
       name: x.name,
       orderId: '123',
-      productId: '123',
+    productId: '123',
       slug: x.slug,
       qty: x.stock,
       image: x.images[0],
@@ -106,7 +105,7 @@ export default function PurchaseReceiptEmail({order}: OrderInformationProps) {
                     </Section>
                     <Section className="border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4">
                         {order.orderitems.map((item) => (
-                            <Row key={item.ProductId} className="mt-8">
+                            <Row key={item.productId} className="mt-8">
                                 <Column className="w-20">
                                     <Img 
                                     width='80'

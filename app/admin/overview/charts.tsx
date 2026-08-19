@@ -65,8 +65,8 @@ const Charts = ({
                             backgroundColor: 'hsl(var(--card))',
                             boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                         }}
-                        formatter={(value: number) => [
-                            `$${value.toLocaleString()}`,
+                        formatter={(value) => [
+                            `$${Number(value ?? 0).toLocaleString()}`,
                             'Sales',
                         ]}
                     />

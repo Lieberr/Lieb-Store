@@ -26,7 +26,9 @@ const ShippingAddressPage = async () => {
 
     if (user.address) {
         try {
-            address = JSON.parse(user.address) as shippingAddress;
+            address = (typeof user.address === 'string'
+                ? JSON.parse(user.address)
+                : user.address) as shippingAddress;
         } catch {
             address = null;
         }

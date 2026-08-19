@@ -47,7 +47,13 @@ export async function getProductById(productId: string): Promise<Product | null>
         where: {id: productId},
     })
 
-    return convertToPlainObject(data);
+    if (!data) return null;
+
+    return {
+        ...data,
+        price: data.price.toString(),
+        rating: Number(data.rating),
+    } as Product;
 }
 
 // Get all products
@@ -122,7 +128,11 @@ export async function getAllProducts({
   const dataCount = await prisma.product.count();
 
   return {
-    data,
+        data: data.map((product) => ({
+            ...product,
+            price: product.price.toString(),
+            rating: Number(product.rating),
+        })) as Product[],
     totalPages: Math.ceil(dataCount / limit),
   };
 }
