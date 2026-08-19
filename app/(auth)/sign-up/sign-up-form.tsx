@@ -15,7 +15,6 @@ import {
   Lock,
   Loader2,
   AlertCircle,
-  CheckCircle2
 } from "lucide-react";
 
 const SignUpForm = () => {
@@ -48,23 +47,7 @@ const SignUpForm = () => {
     );
   };
 
-  if(data && data.success) {
-    return (
-      <div className="space-y-4 text-center"> 
-        <div className="flex items-start gap-2 rounded-lg border border-emerald-500/10 p-4 text-sm text-emerald-600 dark:text-emerald-400">
-          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
-          <p className="text-left font-medium">
-            {data.message}
-          </p>
-        </div>
-
-        <Button asChild className="w-full">
-          <Link href='/sign-in'>
-          Go to Sign In</Link>
-        </Button>
-      </div>
-    )
-  }
+  
 
   return (
     <form action={action}>
