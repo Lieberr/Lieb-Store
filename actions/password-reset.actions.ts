@@ -10,13 +10,11 @@ import {
   hashResetCode, 
   getResetCodeExpiration 
 } from "@/lib/password-reset"; 
-import { resend } from "@/lib/resend"; 
 import { prisma } from "@/db/prisma"; 
 import { hash } from "@/lib/encrypt";
 import { formatError } from "@/lib/utils";
-import { APP_NAME, SENDER_EMAIL } from "@/lib/constants";
+import { sendPasswordResetEmail } from "@/lib/email"; 
 
-// Action 1
 export async function sendResetCodeAction(prevState: unknown, formData: FormData) {
   try {
     const email = formData.get("email");
@@ -53,12 +51,8 @@ export async function sendResetCodeAction(prevState: unknown, formData: FormData
       },
     });
 
-    await resend.emails.send({
-      from: `${APP_NAME} <${SENDER_EMAIL}>`,
-      to: validation.data.email,
-      subject: "Password Reset Code",
-      html: `<p>Your password reset code is: <strong>${code}</strong></p><p>This code expires in 15 minutes.</p>`,
-    });
+    // CORREÇÃO AQUI: Passando os dois parâmetros (email e código) conforme definido no seu email.ts
+    await sendPasswordResetEmail(validation.data.email, code);
 
     return { success: true, message: "Code sent successfully" };
   } catch (error) {
