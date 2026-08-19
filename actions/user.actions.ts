@@ -3,7 +3,6 @@
 import { shippingAddressSchema, signInFormSchema, signUpFormSchema, paymentMethodSchema, updateUserSchema } from "@/lib/validators";
 import {signIn, signOut, auth} from '@/auth';
 import { isRedirectError } from "next/dist/client/components/redirect-error";
-import { hashSync } from "bcrypt-ts-edge";
 import {prisma} from "@/db/prisma";
 import { formatError } from "@/lib/utils";
 import { cookies } from "next/headers";
@@ -12,7 +11,7 @@ import z from "zod";
 import { PAGE_SIZE } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-import { sendVerificationEmailAction } from "./auth.actions";
+import { hash } from "@/lib/encrypt";
 
 
 // Sign in the user with credentials
@@ -54,7 +53,7 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
 
         const plainPassword = user.password;
 
-        user.password = hashSync(user.password,10);
+        user.password = await hash(user.password)
 
         await prisma.user.create({
             data: {
@@ -64,18 +63,14 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
             }
         });
 
-        const emailResult = await sendVerificationEmailAction(user.email);
-
-        if(emailResult.error) {
-            return {
-                success: false,
-                message: emailResult.error
-            }
-        }
+        await signIn('credentials', {
+            email: user.email,
+            password: plainPassword,
+        });
 
         return {
             success: true,
-            message: "Usuário cadastrado com sucesso! Verifique sua caixa de entrada para confirmar a conta."
+            message: "User registered succesfully"
         }
     } catch (error) {
         if(isRedirectError(error)) {

@@ -25,7 +25,6 @@
     "@stripe/stripe-js": "^9.13.0",
     "@uploadthing/react": "^7.3.3",
     "bcrypt": "^6.0.0",
-    "bcrypt-ts-edge": "^3.0.1",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

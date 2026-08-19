@@ -12,7 +12,7 @@ import {
 } from "@/lib/password-reset"; 
 import { resend } from "@/lib/resend"; 
 import { prisma } from "@/db/prisma"; 
-import { hashSync } from "bcrypt-ts-edge"; 
+import { hash } from "@/lib/encrypt";
 import { formatError } from "@/lib/utils";
 import { APP_NAME, SENDER_EMAIL } from "@/lib/constants";
 
@@ -118,7 +118,7 @@ export async function resetPasswordAction(prevState: unknown, formData: FormData
       return { success: false, message: "Session expired. Request a new code." };
     }
 
-    const hashedPassword = hashSync(validation.password, 10);
+    const hashedPassword = await hash(validation.password);
 
     await prisma.user.update({
       where: { email: validation.email },
