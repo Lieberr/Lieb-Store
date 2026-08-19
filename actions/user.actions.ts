@@ -12,6 +12,7 @@ import z from "zod";
 import { PAGE_SIZE } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { sendVerificationEmailAction } from "./auth.actions";
 
 
 // Sign in the user with credentials
@@ -63,14 +64,18 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
             }
         });
 
-        await signIn('credentials', {
-            email: user.email,
-            password: plainPassword,
-        });
+        const emailResult = await sendVerificationEmailAction(user.email);
+
+        if(emailResult.error) {
+            return {
+                success: false,
+                message: emailResult.error
+            }
+        }
 
         return {
             success: true,
-            message: "User registered succesfully"
+            message: "Usuário cadastrado com sucesso! Verifique sua caixa de entrada para confirmar a conta."
         }
     } catch (error) {
         if(isRedirectError(error)) {
@@ -270,4 +275,14 @@ export async function updateUser(user: z.infer<typeof updateUserSchema>) {
 // Sign in with google
 export async function signInWithGoogle() {
     await signIn('google', {redirectTo: '/'});
+}
+
+// Sign in with github
+export async function signInWithGithub() {
+    await signIn('github', {redirectTo: '/'})
+}
+
+// Sign in with linkedin
+export async function signInWithLinkedin() {
+    await signIn('linkedin', {redirectTo: '/'})
 }

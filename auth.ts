@@ -7,6 +7,8 @@ import type { NextAuthConfig } from 'next-auth';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import GoogleProvider from 'next-auth/providers/google';
+import GithubProvider from 'next-auth/providers/github';
+import LinkedinProvider from 'next-auth/providers/linkedin'
 
 
 export const config = {
@@ -24,6 +26,19 @@ export const config = {
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             allowDangerousEmailAccountLinking: true,
+        }),
+        GithubProvider({
+            clientId: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true,
+        }),
+        LinkedinProvider({
+            clientId: process.env.LINKEDIN_CLIENT_ID,
+            clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true,
+            authorization: {
+                params: { scope: 'openid profile email' }
+                }
         }),
         CredentialsProvider({
            credentials: {
