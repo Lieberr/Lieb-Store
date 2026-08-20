@@ -12,6 +12,8 @@ import { PAGE_SIZE } from "@/lib/constants";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { hash } from "@/lib/encrypt";
+import { generateResetCode, getResetCodeExpiration, hashResetCode } from "@/lib/password-reset";
+import { sendVerificationEmail } from "@/lib/email";
 
 
 // Sign in the user with credentials
@@ -51,7 +53,7 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
             confirmPassword: formData.get('confirmPassword')
         });
 
-        const plainPassword = user.password;
+        user.email = user.email.trim().toLowerCase();
 
         user.password = await hash(user.password)
 
@@ -63,14 +65,23 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
             }
         });
 
-        await signIn('credentials', {
-            email: user.email,
-            password: plainPassword,
-        });
+        const code = generateResetCode();
+        const tokenHash = hashResetCode(code);
+        const expiresAt = getResetCodeExpiration();
+
+        await prisma.passwordResetTokenUser.create({
+            data: {
+                email: user.email,
+                tokenHash,
+                expiresAt
+            }
+        })
+
+        await sendVerificationEmail(user.email, code);
 
         return {
             success: true,
-            message: "User registered succesfully"
+            message: "User registered succesfully. Check your email for verification code."
         }
     } catch (error) {
         if(isRedirectError(error)) {
@@ -80,6 +91,72 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
         return {success: false, message: await formatError(error)}
     }
     
+}
+
+//Verify User email
+export async function verifyUserEmailAction(
+    email: string,
+    code: string,
+    password: string
+) {
+    try {
+        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedCode = code.trim();
+
+        if (!/^\d{6}$/.test(normalizedCode)) {
+            return {
+                success: false,
+                message: "The code must contain exactly 6 digits"
+            }
+        }
+
+        const tokenHash = hashResetCode(normalizedCode);
+
+        const tokenRecord = await prisma.passwordResetTokenUser.findFirst({
+            where: {email: normalizedEmail, tokenHash}
+        })
+
+        if(!tokenRecord) {
+            return {
+                success: false,
+                message: "Invalid Code"
+            }
+        }
+
+        if(tokenRecord.expiresAt < new Date()) {
+            return {
+                success: false,
+                message: "Expired Code. Please get a new one."
+            }
+        }
+
+        await prisma.user.update({
+            where: {email: normalizedEmail},
+            data: {emailVerified: new Date()}
+        })
+
+        await signIn('credentials', {
+            email: normalizedEmail,
+            password,
+            redirect: false
+        });
+
+        await prisma.passwordResetTokenUser.deleteMany({
+            where: {email: normalizedEmail}
+        });
+
+        revalidatePath('/user/profile');
+
+        return {
+            success: true,
+            message: "E-mail successfully verify"
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: formatError(error)
+        }
+    }
 }
 
 // Get user by Id

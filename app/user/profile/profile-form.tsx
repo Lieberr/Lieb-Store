@@ -14,18 +14,19 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { updateProfileSchema } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail, User } from "lucide-react";
+import { CheckCircle2, CircleAlert, Loader2, Mail, User } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const ProfileForm = () => {
+const ProfileForm = ({ emailVerified }: { emailVerified: boolean }) => {
     const { data: session, update } = useSession();
     const { toast } = useToast();
 
     const form = useForm<z.infer<typeof updateProfileSchema>>({
         resolver: zodResolver(updateProfileSchema),
-        defaultValues: {
+        // Usa 'values' ao invés de 'defaultValues' para re-sincronizar quando o session carregar
+        values: {
             name: session?.user?.name ?? "",
             email: session?.user?.email ?? "",
         },
@@ -89,6 +90,20 @@ const ProfileForm = () => {
                             <p className="text-xs text-muted-foreground">
                                 Your email address cannot be changed here.
                             </p>
+
+                            <div className="mt-2">
+                                {emailVerified ? (
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                                        <CheckCircle2 className="h-3.5 w-3.5" />
+                                        Email verified
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+                                        <CircleAlert className="h-3.5 w-3.5" />
+                                        Email not verified
+                                    </span>
+                                )}
+                            </div>
 
                             <FormMessage />
                         </FormItem>

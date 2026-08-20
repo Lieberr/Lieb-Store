@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 import ProfileForm from "./profile-form";
 import { UserRound } from "lucide-react";
+import { getUserById } from "@/actions/user.actions";
 
 export const metadata: Metadata = {
     title: "Customer Profile",
@@ -10,6 +11,9 @@ export const metadata: Metadata = {
 
 const Profile = async () => {
     const session = await auth();
+    const user = session?.user?.id
+        ? await getUserById(session.user.id)
+        : null;
 
     return (
         <SessionProvider session={session}>
@@ -48,7 +52,7 @@ const Profile = async () => {
                     </div>
 
                     <div className="px-6 py-6 sm:px-8">
-                        <ProfileForm />
+                        <ProfileForm emailVerified={Boolean(user?.emailVerified)} />
                     </div>
 
                 </div>
