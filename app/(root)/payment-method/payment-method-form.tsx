@@ -105,7 +105,7 @@ const PaymentMethodForm = ({preferredPaymentMethod}: {preferredPaymentMethod: st
                                                             <label
                                                                 key={paymentMethod}
                                                                 htmlFor={`payment-${paymentMethod}`}
-                                                                className={`group relative flex cursor-pointer items-center gap-4 rounded-xl border p-4 transition-all duration-200
+                                                                className={`group relative flex min-w-0 cursor-pointer items-center gap-4 rounded-xl border p-4 transition-all duration-200
 
                                                                     ${
                                                                         selected
@@ -141,7 +141,7 @@ const PaymentMethodForm = ({preferredPaymentMethod}: {preferredPaymentMethod: st
                                                                 </div>
 
 
-                                                                <div className="flex-1">
+                                                                <div className="min-w-0 flex-1 break-words">
 
                                                                     <p className="
                                                                         font-semibold
@@ -165,6 +165,7 @@ const PaymentMethodForm = ({preferredPaymentMethod}: {preferredPaymentMethod: st
                                                                         flex
                                                                         h-6
                                                                         w-6
+                                                                        shrink-0
                                                                         items-center
                                                                         justify-center
                                                                         rounded-full
