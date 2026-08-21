@@ -126,12 +126,12 @@ const OrderDetailsTable = ({order, paypalClientId, isAdmin, stripeClientSecret}:
         )
     }
     return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
 
         {/* Header */}
         <div className="flex flex-col gap-2 border-b pb-6">
-            <div className="flex items-center justify-between gap-4">
-                <div>
+            <div className="flex min-w-0 items-start justify-between gap-4">
+                <div className="min-w-0">
                     <p className="text-sm font-medium text-muted-foreground">
                         Order details
                     </p>
@@ -165,10 +165,10 @@ const OrderDetailsTable = ({order, paypalClientId, isAdmin, stripeClientSecret}:
             </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid min-w-0 gap-6 lg:grid-cols-3">
 
             {/* LEFT SIDE */}
-            <div className="space-y-6 lg:col-span-2">
+            <div className="min-w-0 space-y-6 lg:col-span-2">
 
                 {/* Payment */}
                 <Card className="overflow-hidden">
@@ -361,7 +361,7 @@ const OrderDetailsTable = ({order, paypalClientId, isAdmin, stripeClientSecret}:
 
 
             {/* RIGHT SIDE */}
-            <div className="lg:sticky lg:top-6 lg:self-start">
+            <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
 
                 <Card className="overflow-hidden border-primary/10 shadow-sm">
 
