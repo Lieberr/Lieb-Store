@@ -21,13 +21,13 @@ const Charts = ({
     };
 }) => {
     return (
-        <div className="w-full">
-            <ResponsiveContainer width="100%" height={400}>
+        <div className="h-[280px] min-w-0 w-full overflow-hidden sm:h-[400px]">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <BarChart
                     data={salesData}
                     margin={{
                         top: 10,
-                        right: 10,
+                        right: 0,
                         left: 0,
                         bottom: 10,
                     }}
