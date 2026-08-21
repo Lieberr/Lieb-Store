@@ -128,10 +128,10 @@ const AdminOverviewPage = async () => {
             </div>
 
             {/* Analytics */}
-            <div className="grid gap-6 lg:grid-cols-7">
+            <div className="grid min-w-0 gap-6 lg:grid-cols-7">
 
                 {/* Sales Chart */}
-                <Card className="rounded-2xl shadow-sm lg:col-span-4">
+                <Card className="min-w-0 rounded-2xl shadow-sm lg:col-span-4">
                     <CardHeader className="border-b">
                         <div className="flex items-center justify-between">
                             <div>
@@ -150,7 +150,7 @@ const AdminOverviewPage = async () => {
                         </div>
                     </CardHeader>
 
-                    <CardContent className="pt-6">
+                    <CardContent className="min-w-0 pt-6">
                         <Charts
                             data={{
                                 salesData: summary.salesData,

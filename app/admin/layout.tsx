@@ -17,7 +17,7 @@ export default async function AdminLayout({
 
             {/* Header */}
             <header className="border-b bg-background/95 backdrop-blur">
-                <div className="container mx-auto flex h-16 items-center px-6">
+                <div className="container mx-auto flex h-16 min-w-0 items-center px-4 sm:px-6">
 
                     <Link
                         href="/"
