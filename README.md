@@ -249,6 +249,7 @@ When a review is created or updated, the product rating and review count are rec
 
 #### Order creation flow
 
+```text
 Cart
   │
   ▼
@@ -270,13 +271,14 @@ Clear Cart
   │
   ▼
 Payment
+```
 
 ## 🏗️ Project Architecture
 
-
 The application was organized to separate responsibilities among the interface, business logic, database access, and validation.
 
-src/
+```text
+
 ├── actions/
 │   ├── cart/
 │   ├── product/
@@ -298,10 +300,10 @@ src/
 ├── hooks/
 ├── prisma/
 ├── tests/
-├── hooks/
 ├── lib/
 ├── db/
 └── types/
+```
 
 ## 🌏 Deploy
 
