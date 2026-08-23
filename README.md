@@ -241,6 +241,195 @@ await prisma.passwordResetTokenUser.deleteMany({
 });
 ```
 
+## 💳 PayPal Integration
+
+The application integrates the **PayPal REST API** to process online payments through a server-side payment flow.
+
+The integration uses **OAuth 2.0** to authenticate with PayPal, creates checkout orders, captures payments, and validates API responses before updating the application state.
+
+### 🔄 Payment Flow
+
+```text
+User Checkout
+      │
+      ▼
+createdPaypalOrder()
+      │
+      ├── Generate PayPal access token
+      ├── Create PayPal order
+      └── Store PayPal order ID
+      │
+      ▼
+PayPal Checkout
+      │
+      ▼
+approvePaypalOrder()
+      │
+      ├── Capture payment
+      ├── Validate payment response
+      └── Verify payment status
+      │
+      ▼
+updateOrderToPaid()
+      │
+      ├── Mark order as paid
+      ├── Update payment result
+      ├── Decrease product stock
+      └── Send purchase receipt
+```
+
+### 🔐 OAuth 2.0 Authentication
+
+The application generates a PayPal access token using the `client_credentials` grant:
+
+```ts
+const { PAYPAL_CLIENT_ID, PAYPAL_APP_SECRET } = process.env;
+
+const auth = Buffer.from(
+  `${PAYPAL_CLIENT_ID}:${PAYPAL_APP_SECRET}`
+).toString("base64");
+
+const response = await fetch(
+  `${base}/v1/oauth2/token`,
+  {
+    method: "POST",
+    body: "grant_type=client_credentials",
+    headers: {
+      Authorization: `Basic ${auth}`,
+      "Content-Type":
+        "application/x-www-form-urlencoded",
+    },
+  }
+);
+
+const jsonData = await handleResponse(response);
+
+return jsonData.access_token;
+```
+
+The PayPal credentials are kept in environment variables instead of being exposed to the client.
+
+### 🛒 Creating a PayPal Order
+
+A server-side request is made to the PayPal Checkout Orders API:
+
+```ts
+const accessToken = await generateAccessToken();
+
+const response = await fetch(
+  `${base}/v2/checkout/orders`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: "USD",
+            value: price,
+          },
+        },
+      ],
+    }),
+  }
+);
+```
+
+The generated PayPal order ID is then associated with the corresponding application order.
+
+### 💰 Capturing the Payment
+
+After the customer completes the PayPal checkout, the application captures the payment using the PayPal order ID:
+
+```ts
+const accessToken = await generateAccessToken();
+
+const response = await fetch(
+  `${base}/v2/checkout/orders/${orderId}/capture`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  }
+);
+```
+
+The response is validated before the application considers the payment successful.
+
+### 🛡️ Server-side Payment Validation
+
+The payment flow validates:
+
+- PayPal order existence
+- PayPal payment response
+- PayPal order ID
+- Payment status
+- Payment capture result
+
+After successful validation, the application updates the order and product inventory.
+
+### 🗄️ Database Transaction
+
+The order status and product stock are updated inside a Prisma transaction:
+
+```ts
+await prisma.$transaction(async (tx) => {
+  for (const item of order.OrderItem) {
+    await tx.product.update({
+      where: {
+        id: item.productId,
+      },
+      data: {
+        stock: {
+          increment: -item.qty,
+        },
+      },
+    });
+  }
+
+  await tx.order.update({
+    where: {
+      id: orderId,
+    },
+    data: {
+      isPaid: true,
+      paidAt: new Date(),
+      paymentResult,
+    },
+  });
+});
+```
+
+This keeps the payment status and inventory updates synchronized.
+
+### 🌐 PayPal Environment
+
+The integration uses the **PayPal Sandbox environment** by default:
+
+```ts
+const base =
+  process.env.PAYPAL_API_URL ||
+  "https://api-m.sandbox.paypal.com";
+```
+
+The API URL can be configured through the `PAYPAL_API_URL` environment variable.
+
+### 🧩 Technologies Used
+
+- PayPal REST API
+- OAuth 2.0
+- Next.js Server Actions
+- TypeScript
+- Fetch API
+- Prisma ORM
+- PostgreSQL
+
 ## 🔌 API & Server Actions Reference
 
 The application uses **Next.js Server Actions** to handle server-side operations involving authentication, users, products, cart management, reviews, orders and payments.
