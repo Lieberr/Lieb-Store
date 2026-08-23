@@ -64,6 +64,26 @@ The application features product management, search and filtering, shopping cart
 - Checkout
 - Order management
 
+### ⭐ Reviews
+
+- Create reviews
+- Display reviews
+- User review management
+- Data validation
+
+### 🖼️ Image management
+
+- Image upload
+- UploadThing integration
+- Product image management
+
+### ⚙️ Administration
+
+- Product management
+- User management
+- Order management
+- Administrative access control
+
 ## 🚀 Development
 
 This project was originally developed as part of a project-based course. 
@@ -84,7 +104,7 @@ After completing the course, I continued improving and customizing the applicati
 
 ## 🔐 Security
 
-The application employs various mechanisms to enhance security and protect platform resources.
+The application implements several mechanisms to protect user accounts, application data, and sensitive operations.
 
 - User authentication
 - Authorization for protected resources
@@ -97,25 +117,129 @@ The application employs various mechanisms to enhance security and protect platf
 - Separation of client-side and server-side operations
 - Backend data validation
 
-### ⭐ Reviews
+## 🔑 Password Recovery
 
-- Create reviews
-- Display reviews
-- User review management
-- Data validation
+The application implements a password recovery flow using temporary verification codes, token expiration, database persistence, server-side validation, and password hashing.
 
-### 🖼️ Image management
+### 🔄 Recovery Flow
 
-- Image upload
-- Cloudinary integration
-- Product image management
+```text
+User enters email
+       │
+       ▼
+sendResetCodeAction()
+       │
+       ├── Validate email with Zod
+       ├── Check if user exists
+       ├── Generate reset code
+       ├── Hash verification code
+       ├── Store hash + expiration
+       └── Send code by email
+       │
+       ▼
+verifyResetCodeAction()
+       │
+       ├── Validate code
+       ├── Hash submitted code
+       ├── Compare with stored hash
+       └── Check expiration
+       │
+       ▼
+resetPasswordAction()
+       │
+       ├── Validate email, code and password
+       ├── Validate reset token
+       ├── Hash new password
+       ├── Update user password
+       └── Delete used reset token
+```
 
-### ⚙️ Administration
+### 🛡️ Security Features
 
-- Product management
-- User management
-- Order management
-- Administrative access control
+- Email validation with Zod
+- Temporary verification codes
+- Hashed reset codes stored in the database
+- Token expiration
+- Invalid or expired codes are rejected
+- Passwords are hashed before being stored
+- Reset tokens are deleted after successful password recovery
+- Generic response when the requested account does not exist
+
+### 💻 Server-side Implementation
+
+A temporary verification code is generated and hashed before being stored:
+
+```ts
+const code = generateResetCode();
+const tokenHash = hashResetCode(code);
+const expiresAt = getResetCodeExpiration();
+
+await prisma.passwordResetTokenUser.create({
+  data: {
+    email: validation.data.email,
+    tokenHash,
+    expiresAt,
+  },
+});
+
+await sendPasswordResetEmail(
+  validation.data.email,
+  code
+);
+```
+
+During verification, the submitted code is hashed again and compared with the stored token:
+
+```ts
+const tokenHash = hashResetCode(code);
+
+const tokenRecord =
+  await prisma.passwordResetTokenUser.findFirst({
+    where: {
+      email,
+      tokenHash,
+    },
+  });
+
+if (!tokenRecord) {
+  return {
+    success: false,
+    message: "Invalid reset code",
+  };
+}
+
+if (tokenRecord.expiresAt < new Date()) {
+  return {
+    success: false,
+    message: "Code has expired. Please request a new one.",
+  };
+}
+```
+
+After successful validation, the new password is hashed before being stored:
+
+```ts
+const hashedPassword = await hash(validation.password);
+
+await prisma.user.update({
+  where: {
+    email: validation.email,
+  },
+  data: {
+    password: hashedPassword,
+  },
+});
+```
+
+After the password is updated, the reset token is deleted:
+
+```ts
+await prisma.passwordResetTokenUser.deleteMany({
+  where: {
+    email: validation.email,
+  },
+});
+```
 
 ## 🔌 API & Server Actions Reference
 
