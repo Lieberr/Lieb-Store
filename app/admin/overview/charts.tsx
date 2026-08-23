@@ -21,7 +21,7 @@ const Charts = ({
     };
 }) => {
     return (
-        <div className="h-[280px] min-w-0 w-full overflow-hidden sm:h-[400px]">
+        <div className="h-[280px] min-w-0 max-w-full w-full overflow-hidden sm:h-[400px]">
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <BarChart
                     data={salesData}
