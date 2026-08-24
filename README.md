@@ -47,7 +47,7 @@ The application features product management, search and filtering, shopping cart
 - Password recovery via email
 - Password change
 - Data validation
-- Profile management
+- Profile management (including custom profile image upload and removal)
 - Access control
 
 ### 🛒 E-commerce
@@ -76,6 +76,7 @@ The application features product management, search and filtering, shopping cart
 - Image upload
 - UploadThing integration
 - Product image management
+- User profile picture management
 
 ### ⚙️ Administration
 
@@ -467,7 +468,7 @@ The application uses **Next.js Server Actions** to handle server-side operations
 | Action | Description | Access |
 |---|---|---|
 | `getUserById` | Retrieves a user by ID | Server |
-| `updateProfile` | Updates the authenticated user's profile information | Authenticated |
+| `updateProfile` | Updates the authenticated user's profile information (name and image) | Authenticated |
 | `updateUserAddress` | Updates the authenticated user's shipping address | Authenticated |
 | `updateUserPaymentMethod` | Updates the authenticated user's payment method | Authenticated |
 | `getAllUsers` | Retrieves users with pagination and search | Server |
