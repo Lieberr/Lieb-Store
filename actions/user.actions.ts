@@ -230,7 +230,7 @@ export async function updateUserPaymentMethod(data: z.infer<typeof paymentMethod
 }
 
 // Update the user profile
-export async function updateProfile(user: {name: string, email: string}) {
+export async function updateProfile(user: {name: string, email: string, image?: string | null}) {
     try {
         const session = await auth();
 
@@ -247,13 +247,14 @@ export async function updateProfile(user: {name: string, email: string}) {
                 id: session?.user?.id
             },
             data: {
-                name: user.name
+                name: user.name,
+                image: user.image
             }
         })
 
         return {
             success: true,
-            message: 'User updated succesfully'
+            message: 'User updated successfully'
         }
     } catch (error) {
         return {

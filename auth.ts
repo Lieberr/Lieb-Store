@@ -59,6 +59,7 @@ export const config = {
                             name: user.name,
                             email: user.email,
                             role: user.role,
+                            image: user.image,
                         };
                     }
                 }
@@ -72,6 +73,7 @@ export const config = {
             if (user) {
                 token.id = user.id;
                 token.role = user.role || 'user';
+                token.picture = user.image;
 
                 if (!user.name || user.name === "NO_NAME") {
                     token.name = user.email!.split('@')[0];
@@ -109,22 +111,29 @@ export const config = {
             if (token.id && !token.role) {
                 const dbUser = await prisma.user.findUnique({
                     where: { id: token.id },
-                    select: { role: true }
+                    select: { role: true, image: true }
                 });
-                if (dbUser) token.role = dbUser.role;
+                if (dbUser) {
+                    token.role = dbUser.role;
+                    if (dbUser.image) token.picture = dbUser.image;
+                }
             }
 
             if (trigger === 'update') {
                 if (session?.user?.name) {
                     token.name = session.user.name;
                 }
+                if(session?.user?.image !== undefined) {
+                    token.picture = session.user.image;
+                }
                 if (token.id) {
                     const updatedUser = await prisma.user.findUnique({
                         where: { id: token.id },
-                        select: { role: true }
+                        select: { role: true, image: true }
                     });
                     if (updatedUser) {
                         token.role = updatedUser.role;
+                        token.picture = updatedUser.image;
                     }
                 }
             }
@@ -138,6 +147,8 @@ export const config = {
                 session.user = {
                     ...session.user,
                     role: token.role,
+                    name: token.name,
+                    image: token.picture ?? null
                 };
             }
             return session;
