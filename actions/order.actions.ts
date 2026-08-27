@@ -7,12 +7,11 @@ import { getMyCart } from "./cart.actions";
 import { getUserById } from "./user.actions";
 import { insertOrderSchema } from "@/lib/validators";
 import { prisma } from "@/db/prisma";
-import { CartItem, PaymentResult, shippingAddress } from "@/types";
+import { CartItem, PaymentResult } from "@/types";
 import { paypal } from "@/lib/paypal";
 import { revalidatePath } from "next/cache";
 import { PAGE_SIZE } from "@/lib/constants";
 import { Prisma } from "@prisma/client";
-import { sendPurchaseReceipt } from "@/email";
 
 
 // Create order and create the order items
@@ -276,23 +275,6 @@ export async function updateOrderToPaid({
         })
 
         if (!updateOrder) throw new Error('Order not found');
-
-        await sendPurchaseReceipt({
-            order: {
-                ...updateOrder,
-                shippingAddress: updateOrder.shippingAddress as shippingAddress,
-                paymentResult: updateOrder.paymentResult as PaymentResult,
-                orderitems: updateOrder.OrderItem.map((item) => ({
-                ...item,
-                price: item.price.toString(),
-                qty: Number(item.qty),
-                })),
-                user: {
-                name: updateOrder.user.name,
-                email: updateOrder.user.email,
-                },
-            }
-            });
 }
 
 // Get users orders
