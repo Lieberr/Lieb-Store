@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const TARGET_DATE = new Date('2026-08-25T00:00:00');
+const TARGET_DATE = new Date('2026-08-29T00:00:00');
 
 const calculateTimeRemaining = (targetDate: Date) => {
     const currentTime = new Date();
