@@ -8,7 +8,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Product } from "@/types";
-import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -21,13 +20,6 @@ const ProductCarousel = ({ data }: { data: Product[] }) => {
           loop: true,
           align: "start",
         }}
-        plugins={[
-          Autoplay({
-            delay: 2500,
-            stopOnInteraction: false,
-            stopOnMouseEnter: true,
-          }),
-        ]}
         className="w-full"
       >
         <CarouselContent>
