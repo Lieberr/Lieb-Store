@@ -5,7 +5,20 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Stripe } from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
+// Força essa rota a ser sempre renderizada dinamicamente (nunca em build time),
+// já que ela depende de uma secret key e de dados de pagamento em tempo real.
+export const dynamic = "force-dynamic";
+
+// Cria o client do Stripe só quando a função é chamada (lazy),
+// e não no topo do módulo. Isso evita que o Next tente instanciar
+// o Stripe durante a etapa de "collect page data" do build, quando
+// a env var pode ainda não estar disponível.
+function getStripeClient() {
+    if (!process.env.STRIPE_SECRET_KEY) {
+        throw new Error("STRIPE_SECRET_KEY não está configurada no ambiente");
+    }
+    return new Stripe(process.env.STRIPE_SECRET_KEY);
+}
 
 const SuccessPage = async (props: {
     params: Promise<{
@@ -18,6 +31,7 @@ const SuccessPage = async (props: {
     const {id} = await props.params;
     const {payment_intent: paymentIntentId} = await props.searchParams;
 
+    const stripe = getStripeClient();
 
     // Fetch order
     const order = await getOrderById(id);
@@ -35,7 +49,7 @@ const SuccessPage = async (props: {
     const isSuccess = paymentIntent.status === 'succeeded';
 
     if(!isSuccess) {
-        return redirect(`/order/$${id}`)
+        return redirect(`/order/${id}`)
     }
 
     return ( 
